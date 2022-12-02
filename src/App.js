@@ -4,18 +4,22 @@ import { useEffect, useState, createContext } from 'react';
 // eslint-disable-next-line import/no-cycle
 import Seat from './Seat';
 
+// creating a context to store an array which contains retrieved information via GET request
 export const UserContext = createContext([]);
 
 function App() {
-  const [data, setData] = useState('');
-  const [num, setNum] = useState(0);
-  const [rows, setRows] = useState(0);
+  const [data, setData] = useState(''); // state variable for retrieved json data
+  const [num, setNum] = useState(0); // state variable which holds number of rows
+  const [rows, setRows] = useState(0); // state variable which is passed as prop to seat children component
 
   useEffect(() => {
+    // useEffect hook which runs whenever the data state variable is modified
     setRows(num);
   }, [data]);
 
+  // A click Handler to fetch info when fetch-row button is clicked.
   const getRows = async () => {
+    // GET request to retrive the data regarding seats.
     fetch(`https://codebuddy.review/seats?count=${num}`)
       .then(res => res.json())
       .then(dat => {
