@@ -38,6 +38,10 @@ body{
     background-color: rgb(35, 161, 35);
 }
 
+.greens{
+    background-color: rgb(35, 161, 35);
+}
+
 .submit{
     pointer-events: none;
     opacity: 40%;    

@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import './styles.css';
 // eslint-disable-next-line import/no-cycle
 import { UserContext } from './App';
@@ -15,6 +15,17 @@ function Seat({ rows }) {
     const [msg, setMsg] = useState(''); // state variable for message for the user
     const [seatId, setId] = useState([]); // state variable for storing selected seat IDs
 
+    useEffect( () => {
+        setAmount(0)
+        setMsg('')
+        setCount(0)
+        setId([])
+        for(let ele of document.getElementsByClassName('seat')){
+            if (ele.attributes['class'].value === 'seat green'){
+                ele.attributes['class'].value = 'seat'
+            }  
+        }
+    },[arr_val])
     
   // A Function to get total number of seats
   function getTotalSeats(num) {
@@ -133,7 +144,7 @@ function Seat({ rows }) {
       <div className="info">
         reserved: &nbsp; <div className="seat res">&nbsp;</div>
         <span>
-            selected: &nbsp; <div className='seat green'>&nbsp;</div>
+            selected: &nbsp; <div className='seat greens'>&nbsp;</div>
         </span>
       </div>
       <button type="button" className="btn btn-primary sub" ref={submitButton} onClick={(e) => submitH(e)}>Submit</button>
