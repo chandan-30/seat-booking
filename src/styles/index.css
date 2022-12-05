@@ -1,3 +1,9 @@
 body {
   font-size: 16px;
+  background-color: #0F172A;
+}
+
+#root{
+  background-color: #1E293B !important;
+  border:  1pt solid #6BB2D7;
 }

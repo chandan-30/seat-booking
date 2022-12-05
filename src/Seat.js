@@ -155,15 +155,17 @@ function Seat({ rows }) {
       </div>
       <button
         type="button"
-        className="btn btn-primary sub"
+        className="bg-sky-500/50 pl-2 pr-2 py-1 rounded sub"
         ref={submitButton}
         onClick={e => submitH(e)}
       >
         Submit
       </button>
-      <span className="spamsg">{msg}</span>
+      <span className="spamsg blink_text">{msg}</span>
       <p className="pmsg">
-        Selected {seatcount} seats and total cost is ${amount}
+        <span>
+          Selected {seatcount} seats and total cost is ${amount}
+        </span>
       </p>
     </>
   );

@@ -3,6 +3,7 @@ import './styles/index.css';
 import { useEffect, useState, createContext } from 'react';
 // eslint-disable-next-line import/no-cycle
 import Seat from './Seat';
+import './output.css';
 
 // creating a context to store an array which contains retrieved information via GET request
 export const UserContext = createContext([]);
@@ -30,7 +31,9 @@ function App() {
   return (
     <UserContext.Provider value={data}>
       <div>
-        <p className="label">Please select the number of rows</p>
+        <p className="label">
+          <span>Please select the number of rows</span>
+        </p>
         <input
           type="range"
           value={num}
@@ -39,7 +42,11 @@ function App() {
           onChange={e => setNum(e.currentTarget.value)}
         />
         <span className="spanum">{num}</span>
-        <button type="button" className="btn btn-primary fet" onClick={getRows}>
+        <button
+          type="button"
+          className="bg-sky-500/50 pl-2 pr-2 py-1 rounded fet"
+          onClick={getRows}
+        >
           Fetch rows
         </button>
       </div>
