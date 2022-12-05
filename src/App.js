@@ -30,9 +30,7 @@ function App() {
   return (
     <UserContext.Provider value={data}>
       <div>
-      <div>
-        <label>Please select the number of rows</label>
-      </div>
+        <p className="label">Please select the number of rows</p>
         <input
           type="range"
           value={num}

@@ -1,40 +1,41 @@
+/* eslint-disable react/no-array-index-key */
 import { useState, useContext, useRef, useEffect } from 'react';
 import './styles.css';
 // eslint-disable-next-line import/no-cycle
 import { UserContext } from './App';
 
-
 function Seat({ rows }) {
+  const arrVal = useContext(UserContext); // retrieved array via GET request
+  const submitButton = useRef(); // reference to the submt button
 
-    let arr_val = useContext(UserContext); // retrieved array via GET request
-    let submitButton = useRef(); // reference to the submt button
-    
+  const [seatcount, setCount] = useState(0); // state variable for seatcount
+  const [amount, setAmount] = useState(0); // state variable for amount
+  const [msg, setMsg] = useState(''); // state variable for message for the user
+  const [seatId, setId] = useState([]); // state variable for storing selected seat IDs
 
-    const [seatcount, setCount] = useState(0); // state variable for seatcount
-    const [amount, setAmount] = useState(0); // state variable for amount
-    const [msg, setMsg] = useState(''); // state variable for message for the user
-    const [seatId, setId] = useState([]); // state variable for storing selected seat IDs
+  useEffect(() => {
+    setAmount(0);
+    setMsg('');
+    setCount(0);
+    setId([]);
+    for (const ele of document.getElementsByClassName('seat')) {
+      if (ele.attributes.class.value === 'seat green') {
+        ele.attributes.class.value = 'seat';
+      }
+    }
+  }, [arrVal]);
 
-    useEffect( () => {
-        setAmount(0)
-        setMsg('')
-        setCount(0)
-        setId([])
-        for(let ele of document.getElementsByClassName('seat')){
-            if (ele.attributes['class'].value === 'seat green'){
-                ele.attributes['class'].value = 'seat'
-            }  
-        }
-    },[arr_val])
-    
   // A Function to get total number of seats
   function getTotalSeats(num) {
     let sum = 0;
-    num = parseInt(num);
+    // eslint-disable-next-line no-param-reassign
+    num = parseInt(num, 10);
     while (num !== 0) {
       sum += num;
+      // eslint-disable-next-line no-param-reassign
       num -= 1;
     }
+
     return sum;
   }
 
@@ -42,41 +43,41 @@ function Seat({ rows }) {
   const seatClickHandler = e => {
     let rowNum = e.currentTarget.attributes['data-key'].value.split(',')[0];
     let indexNum = e.currentTarget.attributes['data-key'].value.split(',')[1];
-    let price = rowNum * 10 + 20;
+    const price = rowNum * 10 + 20;
 
-    if(!e.currentTarget.attributes['class'].value.includes('green')){ // condition to check if seat is already selected or not
-        e.currentTarget.attributes['class'].value = 'seat green';
-        setCount(seatcount + 1);
-        setAmount(amount + price);
-        rowNum = parseInt(rowNum);
-        indexNum = parseInt(indexNum);
-        let id = arr_val[rows-rowNum].seats[indexNum].id;
-        setId((prev) => [...prev, id])
+    if (!e.currentTarget.attributes.class.value.includes('green')) {
+      // condition to check if seat is already selected or not
+      e.currentTarget.attributes.class.value = 'seat green';
+      setCount(seatcount + 1);
+      setAmount(amount + price);
+      rowNum = parseInt(rowNum, 10);
+      indexNum = parseInt(indexNum, 10);
+      const { id } = arrVal[rows - rowNum].seats[indexNum];
+      setId(prev => [...prev, id]);
+    } else {
+      e.currentTarget.attributes.class.value = 'seat';
+      setCount(seatcount - 1);
+      setAmount(amount - price);
 
+      const array = [...seatId];
+      rowNum = parseInt(rowNum, 10);
+      indexNum = parseInt(indexNum, 10);
+
+      const { id } = arrVal[rows - rowNum].seats[indexNum];
+      const index = array.indexOf(id);
+      if (index !== -1) {
+        array.splice(index, 1);
+        setId(array);
+      }
     }
-    else{
-        e.currentTarget.attributes['class'].value = 'seat';
-        setCount(seatcount - 1);
-        setAmount(amount - price);
+  };
 
-        let array = [...seatId];
-        rowNum = parseInt(rowNum);
-        indexNum = parseInt(indexNum);
-
-        let id = arr_val[rows-rowNum].seats[indexNum].id;
-        let index = array.indexOf(id)
-        if (index !== -1) {
-            array.splice(index, 1);
-            setId(array);
-        }
-        }  
-    };
-
-    // Function to make a POST request based on user selection
-  const submitH = e => {
-    if (seatcount < 1 || seatcount > 5) { // condition to check if selected seat count is within range [1-5] inclusive
-        setMsg('please select atleast 1 and atmost 5 seats');
-        return;
+  // Function to make a POST request based on user selection
+  const submitH = () => {
+    if (seatcount < 1 || seatcount > 5) {
+      // condition to check if selected seat count is within range [1-5] inclusive
+      setMsg('please select atleast 1 and atmost 5 seats');
+      return;
     }
 
     // Preparing the required options for the POST request
@@ -86,10 +87,10 @@ function Seat({ rows }) {
     };
     // POST request
     fetch('https://codebuddy.review/submit', options)
-        .then(res => res.json())
-        .then( data => {
+      .then(res => res.json())
+      .then(() => {
         setMsg('successfull !');
-        });
+      });
   };
 
   let count = getTotalSeats(rows);
@@ -129,27 +130,41 @@ function Seat({ rows }) {
 
   return (
     <>
-      {
-        arr.map( row => {
-            return <div className="row">{
-            // eslint-disable-next-line arrow-body-style
-            row.map( (seat, index) => {
-                return <div className={seat === -1 ?'seat res': 'seat'} data-key={[seat, index]} onClick={(e) => seatClickHandler(e)}>&nbsp;</div>
-            })
-            }
+      {arr.map(row => (
+        <div className="row">
+          {row.map((seat, index) => (
+            <div
+              className={seat === -1 ? 'seat res' : 'seat'}
+              data-key={[seat, index]}
+              onClick={e => seatClickHandler(e)}
+              role="button"
+              tabIndex={0}
+              onKeyUp={() => {}}
+              key={index}
+            >
+              &nbsp;
             </div>
-        // eslint-disable-next-line prettier/prettier
-        })
-      }
+          ))}
+        </div>
+      ))}
       <div className="info">
         reserved: &nbsp; <div className="seat res">&nbsp;</div>
         <span>
-            selected: &nbsp; <div className='seat greens'>&nbsp;</div>
+          selected: &nbsp; <div className="seat greens">&nbsp;</div>
         </span>
       </div>
-      <button type="button" className="btn btn-primary sub" ref={submitButton} onClick={(e) => submitH(e)}>Submit</button>
-      <span className='spamsg'>{msg}</span>
-      <p className='pmsg'>Selected {seatcount} seats and total cost is ${amount}</p>
+      <button
+        type="button"
+        className="btn btn-primary sub"
+        ref={submitButton}
+        onClick={e => submitH(e)}
+      >
+        Submit
+      </button>
+      <span className="spamsg">{msg}</span>
+      <p className="pmsg">
+        Selected {seatcount} seats and total cost is ${amount}
+      </p>
     </>
   );
 }
